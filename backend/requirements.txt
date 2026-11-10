@@ -1,0 +1,8 @@
+fastapi>=0.110,<1.0
+uvicorn>=0.29,<1.0
+python-multipart>=0.0.9
+pillow>=10.0
+# Same TensorFlow/Keras version that trained and saved the model in Colab (2.21.0).
+# tensorflow-cpu is smaller and enough for inference. If pip cannot find it,
+# replace this line with: tensorflow==2.21.0
+tensorflow-cpu==2.21.0

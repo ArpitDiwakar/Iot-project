@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AnimalLens AI | Multi-Class Animal Image Classification</title>
+  <meta name="description" content="Upload an animal photo and a MobileNetV2 deep learning model identifies it among 10 categories. B.Tech CSE project, Invertis University." />
+  <meta name="theme-color" content="#080c1a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#classifier">Skip to the classifier</a>
+
+  <!-- ================= NAVIGATION ================= -->
+  <header class="nav" id="top">
+    <div class="container nav-inner">
+      <a class="brand" href="#home" aria-label="AnimalLens AI home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="16" cy="16" r="5"/>
+            <path d="M2 16s5-9 14-9 14 9 14 9-5 9-14 9S2 16 2 16Z"/>
+            <circle cx="16" cy="16" r="1.4" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-text">AnimalLens <b>AI</b></span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav id="nav-links" class="nav-links" aria-label="Main">
+        <a href="#home">Home</a>
+        <a href="#classifier">Animal Classifier</a>
+        <a href="#about">About Project</a>
+        <a href="#categories">Animal Categories</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>AI-Powered Animal Image Classification</h1>
+          <p class="lead">Upload an image and let Artificial Intelligence identify the animal using Deep Learning and MobileNetV2.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#classifier">Start Classification</a>
+            <a class="btn btn-ghost" href="#about">Explore Project</a>
+          </div>
+          <dl class="hero-stats">
+            <div><dt>Animal classes</dt><dd>10</dd></div>
+            <div><dt>Dataset images</dt><dd>26,179</dd></div>
+            <div><dt>Validation accuracy</dt><dd>95.59%</dd></div>
+          </dl>
+          <p class="fineprint">Figures come from the project's training notebook (Animals-10, 80/20 split, 5 epochs).</p>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit">
+            <span class="orb o1">🐶</span><span class="orb o2">🐴</span><span class="orb o3">🐘</span>
+            <span class="orb o4">🦋</span><span class="orb o5">🐔</span><span class="orb o6">🐱</span>
+            <span class="orb o7">🐄</span><span class="orb o8">🐑</span><span class="orb o9">🕷️</span>
+            <span class="orb o10">🐿️</span>
+            <div class="core">
+              <svg viewBox="0 0 120 120" width="110" height="110" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <circle cx="60" cy="60" r="12" fill="currentColor" stroke="none"/>
+                <circle cx="22" cy="34" r="6"/><circle cx="22" cy="86" r="6"/>
+                <circle cx="98" cy="34" r="6"/><circle cx="98" cy="86" r="6"/>
+                <circle cx="60" cy="14" r="6"/><circle cx="60" cy="106" r="6"/>
+                <path d="M27 37l24 16M27 83l24-16M93 37L69 53M93 83L69 67M60 20v28M60 100V72"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CLASSIFIER ================= -->
+    <section class="section" id="classifier">
+      <div class="container">
+        <div class="section-head">
+          <h2>Animal Classifier</h2>
+          <p>Choose a clear photo of one animal. The image is sent to the trained model and the three most likely answers come back with confidence scores.</p>
+        </div>
+
+        <div class="api-status" id="api-status" role="status" aria-live="polite">
+          <span class="dot" id="api-dot"></span><span id="api-status-text">Checking server…</span>
+        </div>
+
+        <div class="classifier-grid">
+          <!-- Upload panel -->
+          <div class="panel upload-panel">
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose or drop an image">
+              <input type="file" id="file-input" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden />
+              <div class="dz-empty" id="dz-empty">
+                <div class="dz-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                </div>
+                <p class="dz-title">Drag and drop an image here</p>
+                <p class="dz-sub">JPG, JPEG or PNG, up to <span id="max-size-label">5</span> MB</p>
+                <button type="button" class="btn btn-ghost btn-sm" id="browse-btn">Browse image</button>
+              </div>
+              <div class="dz-preview" id="dz-preview" hidden>
+                <img id="preview-img" alt="Preview of the selected image" />
+                <div class="preview-meta">
+                  <span id="file-name" class="file-name"></span>
+                  <span id="file-size" class="file-size"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="error-box" id="error-box" role="alert" hidden>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+              <span id="error-text"></span>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-primary" id="predict-btn">
+                <span class="btn-label">Predict Animal</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="btn btn-ghost" id="change-btn" hidden>Change image</button>
+              <button type="button" class="btn btn-ghost" id="remove-btn" hidden>Remove image</button>
+              <button type="button" class="btn btn-text" id="reset-btn">Reset</button>
+            </div>
+          </div>
+
+          <!-- Result panel -->
+          <div class="panel result-panel" aria-live="polite">
+            <div class="result-state" id="result-empty">
+              <div class="empty-art" aria-hidden="true">🔍</div>
+              <h3>Your result will appear here</h3>
+              <p>Upload an animal image and press <b>Predict Animal</b>.</p>
+            </div>
+
+            <div class="result-state" id="result-loading" hidden>
+              <div class="scanner" aria-hidden="true"><span></span></div>
+              <h3>Analysing image…</h3>
+              <p id="loading-note">The model is looking at your image.</p>
+            </div>
+
+            <div class="result-state result-content" id="result-content" hidden>
+              <p class="result-label">Predicted animal</p>
+              <div class="top-result">
+                <h3 id="top-name">—</h3>
+                <span class="top-conf" id="top-conf">—</span>
+              </div>
+              <p class="low-note" id="low-note" hidden></p>
+
+              <h4 class="bars-title">Top 3 predictions</h4>
+              <ul class="bars" id="bars"></ul>
+
+              <p class="fineprint" id="result-foot"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section class="section alt" id="about">
+      <div class="container">
+        <div class="section-head">
+          <h2>About the Project</h2>
+          <p>A B.Tech CSE project that teaches a computer to recognise ten kinds of animals from photographs. Tap a question to read the short answer.</p>
+        </div>
+
+        <div class="about-grid">
+          <div class="faq">
+            <details open>
+              <summary>What is animal image classification?</summary>
+              <p>It is the task of looking at a photo and choosing one label from a fixed list. Here the list has 10 animals, and the model decides which one is most likely present in the picture.</p>
+            </details>
+            <details>
+              <summary>What is deep learning?</summary>
+              <p>Deep learning is a part of machine learning that uses neural networks with many layers. Instead of us writing rules such as "cats have pointed ears", the network learns useful patterns on its own from thousands of labelled examples.</p>
+            </details>
+            <details>
+              <summary>What is MobileNetV2?</summary>
+              <p>MobileNetV2 is a compact convolutional neural network designed by Google to run fast with little memory. It was first trained on the large ImageNet dataset, so it already knows how to detect edges, textures, shapes and parts of objects.</p>
+            </details>
+            <details>
+              <summary>What is transfer learning?</summary>
+              <p>Transfer learning reuses a network that has already learned from a huge dataset. In this project the MobileNetV2 base is frozen, and only a small new classifier on top (global average pooling, dropout and a 10-way softmax layer) is trained on the Animals-10 images.</p>
+            </details>
+            <details>
+              <summary>Why is image classification useful?</summary>
+              <p>It powers photo search, wildlife monitoring, farm and livestock management, medical imaging, quality inspection and many accessibility tools. It is also one of the best first projects for learning computer vision.</p>
+            </details>
+          </div>
+
+          <aside class="panel spec" aria-label="Model summary">
+            <h3>Model at a glance</h3>
+            <p class="spec-note">Taken from the project notebook.</p>
+            <table>
+              <tbody>
+                <tr><th scope="row">Architecture</th><td>MobileNetV2 (ImageNet weights, frozen)</td></tr>
+                <tr><th scope="row">Head</th><td>GlobalAveragePooling2D, Dropout 0.25, Dense 10 (softmax)</td></tr>
+                <tr><th scope="row">Input size</th><td>180 × 180 × 3</td></tr>
+                <tr><th scope="row">Dataset</th><td>Animals-10, 26,179 images</td></tr>
+                <tr><th scope="row">Split</th><td>20,944 train / 5,235 validation</td></tr>
+                <tr><th scope="row">Training</th><td>Adam (lr 0.001), batch 32, 5 epochs</td></tr>
+                <tr><th scope="row">Loss</th><td>Sparse categorical crossentropy</td></tr>
+                <tr><th scope="row">Parameters</th><td>2,270,794 total, 12,810 trainable</td></tr>
+                <tr><th scope="row">Validation accuracy</th><td>95.59%</td></tr>
+              </tbody>
+            </table>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CATEGORIES ================= -->
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="section-head">
+          <h2>Animal Categories</h2>
+          <p>The model knows exactly these ten animals. Anything else, such as a car or a person, will still be forced into one of them.</p>
+        </div>
+        <div class="cat-grid" id="cat-grid"></div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="section alt" id="how-it-works">
+      <div class="container">
+        <div class="section-head">
+          <h2>How It Works</h2>
+          <p>From your upload to the final answer, in seven steps.</p>
+        </div>
+        <ol class="steps">
+          <li><h3>You upload an animal image</h3><p>Pick a JPG, JPEG or PNG file in the classifier.</p></li>
+          <li><h3>The frontend sends it to the API</h3><p>The browser posts the file to the FastAPI backend as multipart form data.</p></li>
+          <li><h3>The backend converts it to RGB</h3><p>Every image gets exactly three colour channels, whatever its original format.</p></li>
+          <li><h3>The image is resized to 180 × 180</h3><p>This is the same size the model was trained on.</p></li>
+          <li><h3>The MobileNetV2 model processes it</h3><p>The saved model scales the pixels with MobileNetV2 preprocessing, then extracts features and classifies them.</p></li>
+          <li><h3>The model scores 10 classes</h3><p>A softmax layer turns the output into ten probabilities that add up to 100%.</p></li>
+          <li><h3>The website shows the top 3</h3><p>You see the most likely animals with confidence scores and progress bars.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= TECH STACK ================= -->
+    <section class="section" id="tech">
+      <div class="container">
+        <div class="section-head">
+          <h2>Technology Stack</h2>
+          <p>Tools used to train, serve and present the model.</p>
+        </div>
+        <ul class="tech-grid" id="tech-grid"></ul>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="section alt" id="contact">
+      <div class="container contact">
+        <div class="section-head">
+          <h2>Contact</h2>
+          <p>Questions, feedback or ideas about this project? Get in touch.</p>
+        </div>
+        <div class="contact-card panel">
+          <p class="contact-name" id="contact-name">B.Tech CSE Project Team</p>
+          <p class="contact-uni">Invertis University</p>
+          <div class="contact-links" id="contact-links"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a class="brand" href="#home"><span class="brand-text">AnimalLens <b>AI</b></span></a>
+        <p class="footer-title">Multi-Class Animal Image Classification</p>
+        <p class="footer-sub">B.Tech CSE Project · Invertis University</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#home">Home</a>
+        <a href="#classifier">Animal Classifier</a>
+        <a href="#about">About Project</a>
+        <a href="#categories">Animal Categories</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="container copyright">
+      <p>© <span id="year"></span> Multi-Class Animal Image Classification. Invertis University. All rights reserved.</p>
+      <p>Dataset: Animals-10 on Kaggle. Predictions are model estimates and can be wrong.</p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
