@@ -5,7 +5,7 @@
  */
 window.APP_CONFIG = {
   // Local development: FastAPI started with `python app.py` or uvicorn.
-  API_BASE_URL: "http://127.0.0.1:8000",
+  API_BASE_URL: "https://iot-project-lb6a.onrender.com",
 
   // Keep in sync with MAX_UPLOAD_MB in backend/app.py (default 5).
   MAX_FILE_SIZE_MB: 5,
